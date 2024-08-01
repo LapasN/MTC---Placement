@@ -165,7 +165,7 @@ strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered 
 
 # Strategy parameters
 expiration = st.date_input('Expiration Date', key=f'expiry_{strategy}')
-asset_price = st.data_input('Underlying Asset Price', value = asset_price_fetch, key=f'asset_price_{strategy}')
+asset_price = st.number_input('Underlying Asset Price', value = 100, key=f'asset_price_{strategy}')
 premium = st.number_input('Premium',value=10, key=f'premium_{strategy}')
 strike_price = st.number_input('Strike Price', value= asset_price, key=f'strike_{strategy}')
 
