@@ -23,7 +23,25 @@ def get_stock_data(symbol, API_KEY):
     df['Date'] = pd.to_datetime(df['Date'])
     df.sort_values('Date', inplace=True)
     return df
-
+#Fetch Underlying Asset Price
+def get_underlying_asset_price(symbol, API_KEY):
+    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
+    response = requests.get(url)
+    response.raise_for_status()
+    data = response.json()['Time Series (Daily)']
+    df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
+    
+    for date, values in data.items():
+        row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
+               'Low': float(values['3. low']), 'Close': float(values['4. close'])}
+        df = df.append(row, ignore_index=True)
+    
+    df['Date'] = pd.to_datetime(df['Date'])
+    df.sort_values('Date', inplace=True, ascending=False)  # Sort descending to get the most recent date first
+    
+    most_recent_close = df.iloc[0]['Close']  # Get the most recent closing price
+    return most_recent_close
+    
 # Function to calculate the payoff for a call option
 def calculate_call_payoff(prices, strike, asset_price):
     return np.maximum(prices - strike, 0) - asset_price
@@ -138,16 +156,18 @@ if st.button("Fetch Data"):
     # Create a Plotly interactive line chart showing only the closing prices
     fig = px.line(stock_data, x='Date', y='Close', title='Stock Closing Prices', labels={'Close': 'Closing Price (USD)'})
     st.plotly_chart(fig)
+if st.button("Fetch Asset Price"):
+    asset_price_fetch = get_underlying_asset_price(selected_symbol, API_KEY)
 
 # Strategy selection
 strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered Call", "Married Put","Bull Call Spread","Bull Put Spread",
                                             "Protective Collar","Long Call Butterfly Spread","Iron Butterfly","Iron Condor"])
 
 # Strategy parameters
-strike_price = st.number_input('Strike Price', value=100, key=f'strike_{strategy}')
 expiration = st.date_input('Expiration Date', key=f'expiry_{strategy}')
-asset_price = st.number_input('Underlying Asset Price', value=100, key=f'asset_price_{strategy}')
+asset_price = st.number_input('Underlying Asset Price', value = asset_price_fetch.empty, key=f'asset_price_{strategy}')
 premium = st.number_input('Premium',value=10, key=f'premium_{strategy}')
+strike_price = st.number_input('Strike Price', value= asset_price, key=f'strike_{strategy}')
 
 if strategy == "Covered Call":
     purchase_price = st.number_input('Purchase Price of Underlying Asset', value=100.0, key='purchase_price')
