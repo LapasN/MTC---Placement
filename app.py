@@ -112,4 +112,8 @@ elif strategy == "Iron Condor":
     premium_put_sell = st.number_input('Premium for Sell Put', min_value=0.0, value=2.0, key='premium_put_sell')
     strike_price_call_sell = st.number_input('Strike Price for Sell Call', min_value=0, value=110, key='strike_price_call_sell')
     premium_call_sell = st.number_input('Premium for Sell Call', min_value=0.0, value=2.0, key='premium_call_sell')
-    strike_price_call_buy = st.number_input('Strike Price for Buy Call', min_value=0, value
+    strike_price_call_buy = st.number_input('Strike Price for Buy Call', min_value=0, value=120, key='strike_price_call_buy')
+    premium_call_buy = st.number_input('Premium for Buy Call', min_value=0.0, value=1.0, key='premium_call_buy')
+
+if st.button("Calculate Strategy"):
+    st.write("Calculating strategy payoff... (implementation needed)")
