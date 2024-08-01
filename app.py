@@ -7,7 +7,7 @@ import plotly.express as px
 
 
 # Function definitions
-@st.cache_data(ttl=300)
+@st.cache(ttl=300)
 def get_stock_data(symbol, API_KEY):
     url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
     response = requests.get(url)
@@ -20,6 +20,8 @@ def get_stock_data(symbol, API_KEY):
                'Low': float(values['3. low']), 'Close': float(values['4. close'])}
         row_df = pd.DataFrame([row])  # Convert a single-row dict to DataFrame
         df = pd.concat([df, row_df], ignore_index=True)
+
+
     df['Date'] = pd.to_datetime(df['Date'])
     df.sort_values('Date', inplace=True)
     return df
