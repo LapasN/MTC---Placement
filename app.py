@@ -156,9 +156,6 @@ if st.button("Fetch Data"):
     # Create a Plotly interactive line chart showing only the closing prices
     fig = px.line(stock_data, x='Date', y='Close', title='Stock Closing Prices', labels={'Close': 'Closing Price (USD)'})
     st.plotly_chart(fig)
-if st.button("Fetch Asset Price"):
-    asset_price_fetch = get_underlying_asset_price(selected_symbol, API_KEY)
-    st.asset_price_fetch
 
 # Strategy selection
 strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered Call", "Married Put","Bull Call Spread","Bull Put Spread",
