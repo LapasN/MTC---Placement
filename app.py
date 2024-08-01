@@ -158,6 +158,7 @@ if st.button("Fetch Data"):
     st.plotly_chart(fig)
 if st.button("Fetch Asset Price"):
     asset_price_fetch = get_underlying_asset_price(selected_symbol, API_KEY)
+    st.asset_price_fetch
 
 # Strategy selection
 strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered Call", "Married Put","Bull Call Spread","Bull Put Spread",
