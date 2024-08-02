@@ -169,11 +169,10 @@ if st.button("Fetch Asset Price"):
 strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered Call", "Married Put","Bull Call Spread","Bull Put Spread",
                                             "Protective Collar","Long Call Butterfly Spread","Iron Butterfly","Iron Condor"])
 # Strategy parameters
-strike_price = st.number_input('Strike Price', value= asset_price, key=f'strike_{strategy}')
-expiration = st.date_input('Expiration Date', key=f'expiry_{strategy}')
 asset_price = st.number_input('Underlying Asset Price', value=st.session_state['asset_price_fetch'] if st.session_state['asset_price_fetch'] is not None else 0.0, key=f'asset_price_{strategy}')
+strike_price = st.number_input('Strike Price', value= asset_price, key=f'strike_{strategy}')
 premium = st.number_input('Premium',value=10, key=f'premium_{strategy}')
-
+expiration = st.date_input('Expiration Date', key=f'expiry_{strategy}')
 
 if strategy == "Covered Call":
     purchase_price = st.number_input('Purchase Price of Underlying Asset', value=100.0, key='purchase_price')
