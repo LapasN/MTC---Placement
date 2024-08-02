@@ -34,8 +34,7 @@ def get_underlying_asset_price(symbol, API_KEY):
     for date, values in data.items():
         row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
                'Low': float(values['3. low']), 'Close': float(values['4. close'])}
-        df = df.concat(row, ignore_index=True)
-    
+        df = pd.concat([df, row_df], ignore_index=True)
     df['Date'] = pd.to_datetime(df['Date'])
     df.sort_values('Date', inplace=True, ascending=False)  # Sort descending to get the most recent date first
     
