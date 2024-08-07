@@ -10,38 +10,58 @@ import plotly.graph_objects as go
 # Function definitions
 @st.cache_data(ttl=300)
 def get_stock_data(symbol, API_KEY):
-    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.json()['Time Series (Daily)']
-    df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
-    
-    for date, values in data.items():
-        row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
-               'Low': float(values['3. low']), 'Close': float(values['4. close'])}
-        row_df = pd.DataFrame([row])  # Convert a single-row dict to DataFrame
-        df = pd.concat([df, row_df], ignore_index=True)
-    df['Date'] = pd.to_datetime(df['Date'])
-    df.sort_values('Date', inplace=True)
-    return df
+    try:
+        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+
+        if 'Time Series (Daily)' not in data:
+            st.error("Failed to fetch data. Please try again later.")
+            return pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
+
+        time_series = data['Time Series (Daily)']
+        df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
+        
+        for date, values in time_series.items():
+            row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
+                   'Low': float(values['3. low']), 'Close': float(values['4. close'])}
+            row_df = pd.DataFrame([row])
+            df = pd.concat([df, row_df], ignore_index=True)
+        df['Date'] = pd.to_datetime(df['Date'])
+        df.sort_values('Date', inplace=True)
+        return df
+    except Exception as e:
+        st.error(f"Error fetching stock data: {e}")
+        return pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
 
 def get_underlying_asset_price(symbol, API_KEY):
-    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.json()['Time Series (Daily)']
-    df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
-    
-    for date, values in data.items():
-        row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
-               'Low': float(values['3. low']), 'Close': float(values['4. close'])}
-        row_df = pd.DataFrame([row])
-        df = pd.concat([df, row_df], ignore_index=True)
-    df['Date'] = pd.to_datetime(df['Date'])
-    df.sort_values('Date', inplace=True, ascending=False)  # Sort descending to get the most recent date first
-    
-    most_recent_close = df.iloc[0]['Close']  # Get the most recent closing price
-    return most_recent_close
+    try:
+        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+
+        if 'Time Series (Daily)' not in data:
+            st.error("Failed to fetch data. Please try again later.")
+            return 0.0
+
+        time_series = data['Time Series (Daily)']
+        df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
+        
+        for date, values in time_series.items():
+            row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
+                   'Low': float(values['3. low']), 'Close': float(values['4. close'])}
+            row_df = pd.DataFrame([row])
+            df = pd.concat([df, row_df], ignore_index=True)
+        df['Date'] = pd.to_datetime(df['Date'])
+        df.sort_values('Date', inplace=True, ascending=False)
+        
+        most_recent_close = df.iloc[0]['Close']
+        return most_recent_close
+    except Exception as e:
+        st.error(f"Error fetching asset price: {e}")
+        return 0.0
 
 
 # Function to calculate the payoff for a call option
@@ -156,23 +176,27 @@ selected_symbol = st.selectbox("Select Stock Symbol", symbols)
 if selected_symbol:
     stock_data = get_stock_data(selected_symbol, API_KEY)
     
-    # Create a Plotly candlestick chart
-    fig_candlestick = go.Figure(data=[go.Candlestick(x=stock_data['Date'],
-                                                     open=stock_data['Open'],
-                                                     high=stock_data['High'],
-                                                     low=stock_data['Low'],
-                                                     close=stock_data['Close'])])
-    fig_candlestick.update_layout(title=f'Candlestick Chart for {selected_symbol}', xaxis_title='Date', yaxis_title='Price (USD)')
-    st.plotly_chart(fig_candlestick)
-    
-    # Fetch and display the most recent adjusted close price
-    most_recent_close = get_underlying_asset_price(selected_symbol, API_KEY)
+    # Check if stock_data is empty (indicating an error)
+    if not stock_data.empty:
+        # Create a Plotly candlestick chart
+        fig_candlestick = go.Figure(data=[go.Candlestick(x=stock_data['Date'],
+                                                         open=stock_data['Open'],
+                                                         high=stock_data['High'],
+                                                         low=stock_data['Low'],
+                                                         close=stock_data['Close'])])
+        fig_candlestick.update_layout(title=f'Candlestick Chart for {selected_symbol}', xaxis_title='Date', yaxis_title='Price (USD)')
+        st.plotly_chart(fig_candlestick)
+        
+        # Fetch and display the most recent adjusted close price
+        most_recent_close = get_underlying_asset_price(selected_symbol, API_KEY)
+        if most_recent_close != 0.0:
+            st.success(f"Most recent adjusted close price for {selected_symbol}: ${most_recent_close:.2f}")
 
 # Strategy selection
 strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered Call", "Married Put","Bull Call Spread","Bull Put Spread",
                                             "Protective Collar","Long Call Butterfly Spread","Iron Butterfly","Iron Condor"])
 # Strategy parameters
-asset_price = st.number_input('Underlying Asset Price', value=st.session_state['asset_price_fetch'] if st.session_state['asset_price_fetch'] is not None else 0.0, key=f'asset_price_{strategy}')
+asset_price = st.number_input('Underlying Asset Price', value=most_recent_close, key=f'asset_price_{selected_symbol}')
 strike_price = st.number_input('Strike Price', value= asset_price, key=f'strike_{strategy}')
 premium = st.number_input('Premium',value=10, key=f'premium_{strategy}')
 expiration = st.date_input('Expiration Date', key=f'expiry_{strategy}')
