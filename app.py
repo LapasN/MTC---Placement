@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import requests
 import pandas as pd
 import plotly.express as px 
+import plotly.graph_objects as go
 
 
 # Function definitions
@@ -152,18 +153,20 @@ API_KEY = st.secrets["API_KEY"]["key"]
 symbols = ["AAPL", "MSFT", "GOOGL", "AMZN", "SPY", "QQQ", "DIA", "META", "NFLX", "NVDA", "TSLA", "AMD"]
 selected_symbol = st.selectbox("Select Stock Symbol", symbols)
 
-if st.button("Fetch Data"):
+if selected_symbol:
     stock_data = get_stock_data(selected_symbol, API_KEY)
-    # Create a Plotly interactive line chart showing only the closing prices
-    fig = px.line(stock_data, x='Date', y='Close', title='Stock Closing Prices', labels={'Close': 'Closing Price (USD)'})
-    st.plotly_chart(fig)
     
-if 'asset_price_fetch' not in st.session_state:
-    st.session_state['asset_price_fetch'] = None
-
-if st.button("Fetch Asset Price"):
-    st.session_state['asset_price_fetch'] = get_underlying_asset_price(selected_symbol, API_KEY)
-    st.success(f"Most recent adjusted close price for {selected_symbol}: ${st.session_state['asset_price_fetch']:.2f}")
+    # Create a Plotly candlestick chart
+    fig_candlestick = go.Figure(data=[go.Candlestick(x=stock_data['Date'],
+                                                     open=stock_data['Open'],
+                                                     high=stock_data['High'],
+                                                     low=stock_data['Low'],
+                                                     close=stock_data['Close'])])
+    fig_candlestick.update_layout(title=f'Candlestick Chart for {selected_symbol}', xaxis_title='Date', yaxis_title='Price (USD)')
+    st.plotly_chart(fig_candlestick)
+    
+    # Fetch and display the most recent adjusted close price
+    most_recent_close = get_underlying_asset_price(selected_symbol, API_KEY)
 
 # Strategy selection
 strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered Call", "Married Put","Bull Call Spread","Bull Put Spread",
