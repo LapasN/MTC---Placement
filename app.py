@@ -172,7 +172,7 @@ if selected_symbol:
 strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered Call", "Married Put","Bull Call Spread","Bull Put Spread",
                                             "Protective Collar","Long Call Butterfly Spread","Iron Butterfly","Iron Condor"])
 # Strategy parameters
-asset_price = st.number_input('Underlying Asset Price', value=st.session_state['most_recent_close'] if st.session_state['most_recent_close'] is not None else 0.0, key=f'asset_price_{strategy}')
+asset_price = st.number_input('Underlying Asset Price', value= most_recent_close, key=f'asset_price_{strategy}')
 strike_price = st.number_input('Strike Price', value= round(asset_price,0), key=f'strike_{strategy}')
 premium = st.number_input('Premium',value=10, key=f'premium_{strategy}')
 expiration = st.date_input('Expiration Date', key=f'expiry_{strategy}')
