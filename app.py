@@ -177,8 +177,8 @@ if selected_symbol:
             st.write(f"Most recent adjusted close price for {selected_symbol}: ${most_recent_close:.2f}")
         else:
             st.warning("Unable to fetch the most recent adjusted close price.")
-    else:
-        st.error(f"No data available for {selected_symbol}. Please try again later.")
+        else:
+            st.error(f"No data available for {selected_symbol}. Please try again later.")
 
 # Strategy selection
 strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered Call", "Married Put","Bull Call Spread","Bull Put Spread",
