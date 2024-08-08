@@ -126,7 +126,6 @@ def calculate_iron_condor_payoff(asset_prices, strike_price_put_buy, premium_put
 st.title('Options Strategy Visualizer')
 
 # API data fetch
-API_KEY = st.secrets["API_KEY"]["key"]
 symbols = ["AAPL", "MSFT", "GOOGL", "AMZN", "SPY", "QQQ", "DIA", "META", "NFLX", "NVDA", "TSLA", "AMD"]
 selected_symbol = st.selectbox("Select Stock Symbol", symbols)
 
@@ -135,7 +134,7 @@ most_recent_close = 0.00
 st.write(f"Most recent adjusted close price: ${most_recent_close:.2f}")
 
 if selected_symbol:
-    stock_data = get_stock_data(selected_symbol, API_KEY)
+    stock_data = get_stock_data(selected_symbol)
     
     if not stock_data.empty:
         # Create and display the candlestick chart
@@ -148,7 +147,7 @@ if selected_symbol:
         st.plotly_chart(fig_candlestick)
         
         # Update and display the most recent adjusted close price
-        most_recent_close = get_underlying_asset_price(selected_symbol, API_KEY)
+        most_recent_close = get_underlying_asset_price(selected_symbol)
         if most_recent_close is not None:
             st.write(f"Most recent adjusted close price for {selected_symbol}: ${most_recent_close:.2f}")
         else:
