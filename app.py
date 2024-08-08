@@ -173,12 +173,15 @@ API_KEY = st.secrets["API_KEY"]["key"]
 symbols = ["AAPL", "MSFT", "GOOGL", "AMZN", "SPY", "QQQ", "DIA", "META", "NFLX", "NVDA", "TSLA", "AMD"]
 selected_symbol = st.selectbox("Select Stock Symbol", symbols)
 
+# Display a placeholder for the most recent close price
+most_recent_close = 0.00
+st.write(f"Most recent adjusted close price: ${most_recent_close:.2f}")
+
 if selected_symbol:
     stock_data = get_stock_data(selected_symbol, API_KEY)
     
-    # Check if stock_data is empty (indicating an error)
     if not stock_data.empty:
-        # Create a Plotly candlestick chart
+        # Create and display the candlestick chart
         fig_candlestick = go.Figure(data=[go.Candlestick(x=stock_data['Date'],
                                                          open=stock_data['Open'],
                                                          high=stock_data['High'],
@@ -187,10 +190,14 @@ if selected_symbol:
         fig_candlestick.update_layout(title=f'Candlestick Chart for {selected_symbol}', xaxis_title='Date', yaxis_title='Price (USD)')
         st.plotly_chart(fig_candlestick)
         
-        # Fetch and display the most recent adjusted close price
+        # Update and display the most recent adjusted close price
         most_recent_close = get_underlying_asset_price(selected_symbol, API_KEY)
-        if most_recent_close != 0.0:
-            st.success(f"Most recent adjusted close price for {selected_symbol}: ${most_recent_close:.2f}")
+        if most_recent_close is not None:
+            st.write(f"Most recent adjusted close price for {selected_symbol}: ${most_recent_close:.2f}")
+        else:
+            st.warning("Unable to fetch the most recent adjusted close price.")
+    else:
+        st.error(f"No data available for {selected_symbol}. Please try again later.")
 
 # Strategy selection
 strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered Call", "Married Put","Bull Call Spread","Bull Put Spread",
