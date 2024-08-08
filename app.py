@@ -9,46 +9,31 @@ import plotly.graph_objects as go
 
 # Function definitions
 @st.cache_data(ttl=300)
-def get_stock_data(symbol, API_KEY):
-    try:
-        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
-        response = requests.get(url)
-        response.raise_for_status()
-        data = response.json()
-
-        if 'Time Series (Daily)' not in data:
-            st.error("Failed to fetch data. Please try again later.")
-            return pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
-
-        time_series = data['Time Series (Daily)']
-        df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
-        
-        for date, values in time_series.items():
-            row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
-                   'Low': float(values['3. low']), 'Close': float(values['4. close'])}
-            row_df = pd.DataFrame([row])
-            df = pd.concat([df, row_df], ignore_index=True)
-        df['Date'] = pd.to_datetime(df['Date'])
-        df.sort_values('Date', inplace=True)
-        return df
-    except Exception as e:
-        st.error(f"Error fetching stock data: {e}")
-        return pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
+# Function definitions
+@st.cache_data(ttl=300)
+def get_stock_data(symbols, API_KEY):
+    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbols}&apikey={API_KEY}"
+    response = requests.get(url)
+    response.raise_for_status()
+    data = response.json()['Time Series (Daily)']
+    df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
+    
+    for date, values in data.items():
+        row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
+               'Low': float(values['3. low']), 'Close': float(values['4. close'])}
+        row_df = pd.DataFrame([row])  # Convert a single-row dict to DataFrame
+        df = pd.concat([df, row_df], ignore_index=True)
+    df['Date'] = pd.to_datetime(df['Date'])
+    df.sort_values('Date', inplace=True)
+    return df
 
 def get_underlying_asset_price(symbol, API_KEY):
-    try:
         url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
-
-        if 'Time Series (Daily)' not in data:
-            st.error("Failed to fetch data. Please try again later.")
-            return 0.0
-
         time_series = data['Time Series (Daily)']
         df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
-        
         for date, values in time_series.items():
             row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
                    'Low': float(values['3. low']), 'Close': float(values['4. close'])}
@@ -59,10 +44,6 @@ def get_underlying_asset_price(symbol, API_KEY):
         
         most_recent_close = df.iloc[0]['Close']
         return most_recent_close
-    except Exception as e:
-        st.error(f"Error fetching asset price: {e}")
-        return 0.0
-
 
 # Function to calculate the payoff for a call option
 def calculate_call_payoff(prices, strike, asset_price):
