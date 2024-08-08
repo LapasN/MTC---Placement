@@ -6,9 +6,6 @@ import pandas as pd
 import plotly.express as px 
 import plotly.graph_objects as go
 
-
-# Function definitions
-@st.cache_data(ttl=300)
 # Function definitions
 @st.cache_data(ttl=300)
 def get_stock_data(symbols, API_KEY):
