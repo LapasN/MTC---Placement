@@ -27,12 +27,11 @@ def black_scholes_call(S, K, T, r, sigma):
     d1 = (np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
     d2 = d1 - sigma * np.sqrt(T)
     call_price = S * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d2)
+    current_date = datetime.now()
+    T = (expiration_date - current_date).days / 365  # Time to expiration in years
+    r = 0.05  # Risk-free interest rate
+    sigma = 0.25  # Volatility
     return call_price
-    
-current_date = datetime.now()
-T = (expiration_date - current_date).days / 365  # Time to expiration in years
-r = 0.05  # Risk-free interest rate
-sigma = 0.25  # Volatility
 
 def calculate_call_payoff(prices, strike, T, r, sigma, premium):
     # Calculate the option price using Black-Scholes for each stock price
