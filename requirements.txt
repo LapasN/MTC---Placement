@@ -3,4 +3,4 @@ pandas
 matplotlib
 streamlit
 plotly
-Yfinance
+yfinance
