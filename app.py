@@ -21,9 +21,24 @@ def get_underlying_asset_price(symbols):
     stock_data = yf.download(symbols, period='5d', interval='1d',progress= False) 
     most_recent_close = stock_data['Close'][-1]  # Get the most recent close price
     return most_recent_close
-# Function to calculate the payoff for a call option
-def calculate_call_payoff(prices, strike, asset_price):
-    return np.maximum(prices - strike, 0) - asset_price
+# Black-Scholes formula for Call option
+def black_scholes_call(S, K, T, r, sigma):
+    d1 = (np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+    call_price = S * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d2)
+    return call_price
+    
+current_date = datetime.now()
+T = (expiration_date - current_date).days / 365  # Time to expiration in years
+r = 0.05  # Risk-free interest rate
+sigma = 0.25  # Volatility
+
+def calculate_call_payoff(prices, strike, T, r, sigma, premium):
+    # Calculate the option price using Black-Scholes for each stock price
+    option_prices = [black_scholes_call(S, strike, T, r, sigma) for S in prices]
+    # Calculate the profit/loss by subtracting the premium paid
+    payoffs = [option_price - premium for option_price in option_prices]
+    return payoffs
 
 # Function to calculate the payoff for a put option
 def calculate_put_payoff(prices, strike, asset_price):
@@ -161,7 +176,7 @@ strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered 
 asset_price = st.number_input('Underlying Asset Price', value=most_recent_close, key=f'asset_price_{selected_symbol}')
 strike_price = st.number_input('Strike Price', value=int(round(asset_price, 0)), step=1, key=f'strike_{strategy}')
 premium = st.number_input('Premium',value=10, key=f'premium_{strategy}')
-expiration = st.date_input('Expiration Date', key=f'expiry_{strategy}')
+expiration_date = st.date_input('Expiration Date', key=f'expiry_{strategy}')
 
 if strategy == "Covered Call":
     purchase_price = st.number_input('Purchase Price of Underlying Asset', value=100.0, key='purchase_price')
