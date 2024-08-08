@@ -5,7 +5,7 @@ import requests
 import pandas as pd
 import plotly.express as px 
 import plotly.graph_objects as go
-import Yfinance as yf
+import yfinance as yf
 
 # Function definitions
 @st.cache_data(ttl=300)
