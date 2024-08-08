@@ -264,7 +264,7 @@ if strategy == "Call":
     payoffs = calculate_call_payoff(asset_prices, strike_price, T, r, sigma, premium)
     strategy_label = 'Long Call Payoff'
 elif strategy == "Put":
-    payoffs = calculate_put_payoff(asset_prices, strike_price, premium)
+    payoffs = calculate_put_payoff(asset_prices, strike_price, T, r, sigma, premium)
     strategy_label = 'Long Put Payoff'
 elif strategy == "Straddle":
     payoffs = calculate_straddle_payoff(asset_prices, strike_price, premium)
