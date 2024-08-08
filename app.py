@@ -174,7 +174,7 @@ if selected_symbol:
             st.write(f"Most recent adjusted close price for {selected_symbol}: ${most_recent_close:.2f}")
         else:
             st.warning("Unable to fetch the most recent adjusted close price.")
-        else:
+    else:
             st.error(f"No data available for {selected_symbol}. Please try again later.")
 
 # Strategy selection
