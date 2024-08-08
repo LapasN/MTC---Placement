@@ -8,6 +8,11 @@ import plotly.graph_objects as go
 import yfinance as yf
 from datetime import datetime
 
+current_date = datetime.now()
+T = (expiration_date - current_date).days / 365  # Time to expiration in years
+r = 0.05  # Risk-free interest rate
+sigma = 0.25  # Volatility
+
 # Function definitions
 @st.cache_data(ttl=300)
 def get_stock_data(symbols):
@@ -27,10 +32,6 @@ def black_scholes_call(S, K, T, r, sigma):
     d1 = (np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
     d2 = d1 - sigma * np.sqrt(T)
     call_price = S * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d2)
-    current_date = datetime.now()
-    T = (expiration_date - current_date).days / 365  # Time to expiration in years
-    r = 0.05  # Risk-free interest rate
-    sigma = 0.25  # Volatility
     return call_price
 
 def calculate_call_payoff(asset_prices, strike_price, T, r, sigma, premium):
