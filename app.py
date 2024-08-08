@@ -8,11 +8,6 @@ import plotly.graph_objects as go
 import yfinance as yf
 from datetime import datetime
 
-current_date = datetime.now()
-T = (expiration_date - current_date).days / 365  # Time to expiration in years
-r = 0.05  # Risk-free interest rate
-sigma = 0.25  # Volatility
-
 # Function definitions
 @st.cache_data(ttl=300)
 def get_stock_data(symbols):
@@ -178,6 +173,11 @@ asset_price = st.number_input('Underlying Asset Price', value=most_recent_close,
 strike_price = st.number_input('Strike Price', value=int(round(asset_price, 0)), step=1, key=f'strike_{strategy}')
 premium = st.number_input('Premium',value=10, key=f'premium_{strategy}')
 expiration_date = st.date_input('Expiration Date', key=f'expiry_{strategy}')
+
+current_date = datetime.now()
+T = (expiration_date - current_date).days / 365  # Time to expiration in years
+r = 0.05  # Risk-free interest rate
+sigma = 0.25  # Volatility
 
 if strategy == "Covered Call":
     purchase_price = st.number_input('Purchase Price of Underlying Asset', value=100.0, key='purchase_price')
