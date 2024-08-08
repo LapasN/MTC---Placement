@@ -5,43 +5,22 @@ import requests
 import pandas as pd
 import plotly.express as px 
 import plotly.graph_objects as go
+import Yfinance as yf
 
 # Function definitions
 @st.cache_data(ttl=300)
-def get_stock_data(symbols, API_KEY):
-    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbols}&apikey={API_KEY}"
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.json()['Time Series (Daily)']
-    df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
-    
-    for date, values in data.items():
-        row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
-               'Low': float(values['3. low']), 'Close': float(values['4. close'])}
-        row_df = pd.DataFrame([row])  # Convert a single-row dict to DataFrame
-        df = pd.concat([df, row_df], ignore_index=True)
-    df['Date'] = pd.to_datetime(df['Date'])
-    df.sort_values('Date', inplace=True)
-    return df
+def get_stock_data(symbol):
+    # Download historical market data from Yahoo Finance
+    stock_data = yf.download(symbol, period='1y', interval='1d')  # Last 1 year of daily data
+    stock_data.reset_index(inplace=True)  # Reset index to make 'Date' a column
+    stock_data = stock_data[['Date', 'Open', 'High', 'Low', 'Close']]  # Keep only necessary columns
+    return stock_data
 
-def get_underlying_asset_price(symbol, API_KEY):
-        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
-        response = requests.get(url)
-        response.raise_for_status()
-        data = response.json()
-        time_series = data['Time Series (Daily)']
-        df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close'])
-        for date, values in time_series.items():
-            row = {'Date': date, 'Open': float(values['1. open']), 'High': float(values['2. high']),
-                   'Low': float(values['3. low']), 'Close': float(values['4. close'])}
-            row_df = pd.DataFrame([row])
-            df = pd.concat([df, row_df], ignore_index=True)
-        df['Date'] = pd.to_datetime(df['Date'])
-        df.sort_values('Date', inplace=True, ascending=False)
-        
-        most_recent_close = df.iloc[0]['Close']
-        return most_recent_close
-
+def get_underlying_asset_price(symbol):
+    # Fetch the most recent closing price
+    stock_data = yf.download(symbol, period='5d', interval='1d')  # Last 5 days of data
+    most_recent_close = stock_data['Close'][-1]  # Get the most recent close price
+    return most_recent_close
 # Function to calculate the payoff for a call option
 def calculate_call_payoff(prices, strike, asset_price):
     return np.maximum(prices - strike, 0) - asset_price
