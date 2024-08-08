@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import yfinance as yf
 from datetime import datetime
+from scipy.stats import norm
 
 # Function definitions
 @st.cache_data(ttl=300)
