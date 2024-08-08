@@ -31,7 +31,7 @@ def black_scholes_call(S, K, T, r, sigma):
 
 def calculate_call_payoff(asset_prices, strike_price, T, r, sigma, premium):
     # Calculate the option price using Black-Scholes for each stock price
-    option_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in prices]
+    option_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices]
     # Calculate the profit/loss by subtracting the premium paid
     payoffs = [option_price - premium for option_price in option_prices]
     return payoffs
