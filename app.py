@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.express as px 
 import plotly.graph_objects as go
 import yfinance as yf
+from datetime import datetime
 
 # Function definitions
 @st.cache_data(ttl=300)
