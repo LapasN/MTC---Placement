@@ -11,14 +11,14 @@ import yfinance as yf
 @st.cache_data(ttl=300)
 def get_stock_data(symbols):
     # Download historical market data from Yahoo Finance
-    stock_data = yf.download(symbol, period='1y', interval='1d')  # Last 1 year of daily data
+    stock_data = yf.download(symbols, period='1y', interval='1d')  # Last 1 year of daily data
     stock_data.reset_index(inplace=True)  # Reset index to make 'Date' a column
     stock_data = stock_data[['Date', 'Open', 'High', 'Low', 'Close']]  # Keep only necessary columns
     return stock_data
 
 def get_underlying_asset_price(symbols):
     # Fetch the most recent closing price
-    stock_data = yf.download(symbol, period='5d', interval='1d')  # Last 5 days of data
+    stock_data = yf.download(symbols, period='5d', interval='1d')  # Last 5 days of data
     most_recent_close = stock_data['Close'][-1]  # Get the most recent close price
     return most_recent_close
 # Function to calculate the payoff for a call option
