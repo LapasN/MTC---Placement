@@ -308,8 +308,8 @@ ax.set_title(f'{strategy} Payoff at Different Prices')
 # For strategies like Straddle, Butterfly, Iron Butterfly, Iron Condor, etc., where the profit/loss regions are not straightforward,
 # we need to compute the specific conditions for profit and loss based on the strategy's payoff profile.
 if strategy in ["Call", "Put", "Bull Call Spread", "Bull Put Spread", "Covered Call", "Married Put"]:
-    ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) > 0), color='green', alpha=0.3, interpolate=True)
-    ax.fill_between(asset_prices, payoffs, where=(np.arry(payoffs) <= 0), color='red', alpha=0.3, interpolate=True)
+    ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) > 0), color='green', alpha=0.3)
+    ax.fill_between(asset_prices, payoffs, where=(np.arry(payoffs) <= 0), color='red', alpha=0.3)
 elif strategy in ["Long Call Butterfly Spread", "Iron Butterfly", "Iron Condor"]:
     # Typically, these strategies have a profit region around the ATM strikes and losses elsewhere
     profit_indices = (payoffs > 0)
