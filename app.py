@@ -100,7 +100,6 @@ def calculate_bull_put_spread_payoff_bs(asset_prices, strike_price_short_put, st
     return bull_put_spread_payoff
 # Function to calculate the payoff for a Protective Collar option
 def calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_price_put, premium_put, strike_price_call, premium_call, T, r, sigma):
-def calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_price_put, strike_price_call, T, r, sigma):
     # Calculate put and call option prices using the Black-Scholes formula
     put_prices = np.array([black_scholes_put(S, strike_price_put, T, r, sigma) for S in asset_prices])
     call_prices = np.array([black_scholes_call(S, strike_price_call, T, r, sigma) for S in asset_prices])
