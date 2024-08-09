@@ -85,11 +85,16 @@ def calculate_bull_call_spread_payoff_bs(asset_prices, strike_price_long_call, s
     return bull_call_spread_payoff
 
 # Function to calculate the payoff for a Bull Put Spread option
-def calculate_bull_put_spread_payoff(asset_prices, strike_price_short_put, strike_price_long_put, premium_short_put, premium_long_put):
+def calculate_bull_put_spread_payoff_bs(asset_prices, strike_price_short_put, strike_price_long_put, T, r, sigma, premium_short_put, premium_long_put):
+    # Calculate put option prices using the Black-Scholes formula
+    short_put_prices = np.array([black_scholes_put(S, strike_price_short_put, T, r, sigma) for S in asset_prices])
+    long_put_prices = np.array([black_scholes_put(S, strike_price_long_put, T, r, sigma) for S in asset_prices])
+    
     # Payoff from the short put position
-    short_put_payoff = premium_short_put - np.maximum(strike_price_short_put - asset_prices, 0)
+    short_put_payoff = premium_short_put - short_put_prices
     # Payoff from the long put position (negative because we're buying it)
-    long_put_payoff = np.maximum(strike_price_long_put - asset_prices, 0) - premium_long_put
+    long_put_payoff = long_put_prices - premium_long_put
+    
     # The bull put spread payoff is the sum of the short put and long put payoffs
     bull_put_spread_payoff = short_put_payoff + long_put_payoff
     return bull_put_spread_payoff
@@ -284,7 +289,7 @@ elif strategy == "Bull Call Spread":
     payoffs = calculate_bull_call_spread_payoff_bs(asset_prices, strike_price_long_call, strike_price_short_call, T, r, sigma, premium_long_call, premium_short_call)
     strategy_label = 'Bull Call Spread Payoff'
 elif strategy == "Bull Put Spread":
-    payoffs = calculate_bull_put_spread_payoff(asset_prices, strike_price_short_put, strike_price_long_put, premium_short_put, premium_long_put)
+    payoffs = calculate_bull_put_spread_payoff_bs(asset_prices, strike_price_short_put, strike_price_long_put, T, r, sigma, premium_short_put, premium_long_put)
     strategy_label = 'Bull Put Spread Payoff'
 elif strategy == "Protective Collar": 
     payoffs = calculate_protective_collar_payoff(asset_prices, purchase_price, strike_price_put, premium_put, strike_price_call, premium_call)
