@@ -332,6 +332,12 @@ elif strategy in ["Covered Call"]:
     ax.text(break_even, 0, f' Break-Even\n ${break_even}', horizontalalignment='right')
     ax.axhline(y=max_profit, color='blue', linestyle='--')
     ax.text(asset_prices[-1], max_profit, f' Max Profit: ${max_profit}', verticalalignment='bottom')
+    # Plot Call Option Prices on the secondary y-axis
+    ax2 = ax1.twinx()  # Instantiate a second y-axis that shares the same x-axis
+    color = 'tab:orange'
+    ax2.set_ylabel('Call Option Price', color=color)
+    ax2.plot(asset_prices, call_option_prices, label='Call Option Price', color=color, linestyle='--')
+    ax2.tick_params(axis='y', labelcolor=color)
 elif strategy in ["Long Call Butterfly Spread", "Iron Butterfly", "Iron Condor"]:
     # Typically, these strategies have a profit region around the ATM strikes and losses elsewhere
     profit_indices = (payoffs > 0)
