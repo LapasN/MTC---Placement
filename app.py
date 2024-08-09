@@ -344,6 +344,11 @@ elif strategy == "Covered Call":
     ax.text(break_even, 0, f' Break-Even\n ${break_even}', horizontalalignment='right')
     ax.axhline(y=max_profit, color='blue', linestyle='--')
     ax.text(asset_prices[-1], max_profit, f' Max Profit: ${max_profit}', verticalalignment='bottom')
+    ax2 = ax1.twinx()
+    color = 'tab:orange'
+    ax2.set_ylabel('Call Option Price', color=color)
+    ax2.plot(asset_prices, call_option_prices, label='Call Option Price', color=color)
+    ax2.tick_params(axis='y', labelcolor=color)
 # Apply shading logic for strategies with more complex payoff structures like Butterfly spreads
 elif strategy in ["Long Call Butterfly Spread", "Iron Butterfly"]:
     # Identify profit and loss indices
