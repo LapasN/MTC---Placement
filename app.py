@@ -61,10 +61,10 @@ def calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_c
 
 
 def calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium):
-    call_option_prices = np.array([black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices])
+    call_option_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices]
     long_asset_payoff = call_option_prices - strike_price
     short_call_payoff = np.where(call_option_prices > strike_price, strike_price - call_option_prices + premium, premium)
-    payoffs = (long_asset_payoff + short_call_payoff)*2
+    payoffs = long_asset_payoff + short_call_payoff
     
     return payoffs
 
@@ -85,6 +85,7 @@ def calculate_bull_call_spread_payoff(asset_prices, strike_price_long_call, stri
     # The bull call spread payoff is the sum of the long call and short call payoffs
     bull_call_spread_payoff = long_call_payoff + short_call_payoff
     return bull_call_spread_payoff
+
 # Function to calculate the payoff for a Bull Put Spread option
 def calculate_bull_put_spread_payoff(asset_prices, strike_price_short_put, strike_price_long_put, premium_short_put, premium_long_put):
     # Payoff from the short put position
