@@ -196,9 +196,9 @@ r = 0.05  # Risk-free interest rate
 sigma = 0.25  # Volatility
 
 if strategy == "Covered Call":
-    purchase_price = st.number_input('Purchase Price of Underlying Asset', value= asset_price, key='purchase_price')
+    purchase_price = st.number_input('Purchase Price of Underlying Asset', value= strike_price, key='purchase_price')
 elif strategy == "Married Put":
-    purchase_price = st.number_input('Purchase Price of Underlying Asset', value=asset_price, key='purchase_price')
+    purchase_price = st.number_input('Purchase Price of Underlying Asset', value= asset_price, key='purchase_price')
     premium_paid = st.number_input('Premium Paid for Put Option', value=10.0, key='premium_paid')
 elif strategy == "Straddle":
     # Inputs for the Straddle strategy
