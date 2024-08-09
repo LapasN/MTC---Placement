@@ -276,7 +276,7 @@ elif strategy == "Straddle":
     break_even_up = strike_price + premium
     break_even_down = strike_price - premium
 elif strategy == "Covered Call":
-    payoffs = alculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_received)
+    payoffs = calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_received)
     strategy_label = 'Covered Call Payoff'
 elif strategy == "Married Put":
     payoffs = calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid)
