@@ -100,6 +100,7 @@ def calculate_bull_put_spread_payoff_bs(asset_prices, strike_price_short_put, st
     return bull_put_spread_payoff
 # Function to calculate the payoff for a Protective Collar option
 def calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_price_put, premium_put, strike_price_call, premium_call, T, r, sigma):
+def calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_price_put, strike_price_call, T, r, sigma):
     # Calculate put and call option prices using the Black-Scholes formula
     put_prices = np.array([black_scholes_put(S, strike_price_put, T, r, sigma) for S in asset_prices])
     call_prices = np.array([black_scholes_call(S, strike_price_call, T, r, sigma) for S in asset_prices])
@@ -107,11 +108,11 @@ def calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_p
     # Profit or loss from holding the stock
     stock_payoff = asset_prices - purchase_price
     
-    # Payoff from the long put position (adjusted with Black-Scholes price)
-    long_put_payoff = np.maximum(put_prices - asset_prices, 0) - premium_put
+    # Payoff from the long put position (using Black-Scholes put prices to reflect premiums)
+    long_put_payoff = np.maximum(strike_price_put - asset_prices, 0) - put_prices
     
-    # Payoff from the short call position (adjusted with Black-Scholes price)
-    short_call_payoff = premium_call - np.maximum(asset_prices - call_prices, 0)
+    # Payoff from the short call position (using Black-Scholes call prices to reflect premiums)
+    short_call_payoff = call_prices - np.maximum(asset_prices - strike_price_call, 0)
     
     # The protective collar payoff is the sum of the stock, put, and call payoffs
     protective_collar_payoff = stock_payoff + long_put_payoff + short_call_payoff
