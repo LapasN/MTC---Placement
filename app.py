@@ -153,20 +153,25 @@ def calculate_iron_butterfly_payoff_bs(asset_prices, strike_price_atm, strike_pr
     iron_butterfly_payoff = long_put_payoff + short_atm_put_payoff + short_atm_call_payoff + long_call_payoff
     return iron_butterfly_payoff
 # Function to calculate the payoff for an Iron Condor option
-def calculate_iron_condor_payoff(asset_prices, strike_price_put_buy, premium_put_buy, strike_price_put_sell, premium_put_sell, strike_price_call_sell, premium_call_sell, strike_price_call_buy, premium_call_buy):
+def calculate_iron_condor_payoff_bs(asset_prices, strike_price_put_buy, strike_price_put_sell, strike_price_call_buy, strike_price_call_sell, T, r, sigma, premium_put_buy, premium_put_sell, premium_call_buy, premium_call_sell):
+    # Calculate option prices using the Black-Scholes formula
+    put_price_buy = np.array([black_scholes_put(S, strike_price_put_buy, T, r, sigma) for S in asset_prices])
+    put_price_sell = np.array([black_scholes_put(S, strike_price_put_sell, T, r, sigma) for S in asset_prices])
+    call_price_buy = np.array([black_scholes_call(S, strike_price_call_buy, T, r, sigma) for S in asset_prices])
+    call_price_sell = np.array([black_scholes_call(S, strike_price_call_sell, T, r, sigma) for S in asset_prices])
+
     # Payoff from the long put
-    long_put_payoff = np.maximum(strike_price_put_buy - asset_prices, 0) - premium_put_buy
+    long_put_payoff = put_price_buy - premium_put_buy
     # Payoff from the short put
-    short_put_payoff = premium_put_sell - np.maximum(strike_price_put_sell - asset_prices, 0)
+    short_put_payoff = premium_put_sell - put_price_sell
     # Payoff from the short call
-    short_call_payoff = premium_call_sell - np.maximum(asset_prices - strike_price_call_sell, 0)
+    short_call_payoff = premium_call_sell - call_price_sell
     # Payoff from the long call
-    long_call_payoff = np.maximum(asset_prices - strike_price_call_buy, 0) - premium_call_buy
+    long_call_payoff = call_price_buy - premium_call_buy
 
     # The iron condor payoff is the sum of the individual option payoffs
     iron_condor_payoff = long_put_payoff + short_put_payoff + short_call_payoff + long_call_payoff
     return iron_condor_payoff
-
 
 # Streamlit app layout
 st.title('Options Strategy Visualizer')
@@ -317,17 +322,7 @@ elif strategy == "Iron Butterfly":
     strategy_label = 'Iron Butterfly Payoff'
 elif strategy == "Iron Condor":
     # Calculate payoffs for the Iron Condor strategy
-    payoffs = calculate_iron_condor_payoff(
-        asset_prices,
-        strike_price_put_buy,
-        premium_put_buy,
-        strike_price_put_sell,
-        premium_put_sell,
-        strike_price_call_sell,
-        premium_call_sell,
-        strike_price_call_buy,
-        premium_call_buy
-    )
+    payoffs = calculate_iron_condor_payoff_bs(asset_prices, strike_price_put_buy, strike_price_put_sell, strike_price_call_buy, strike_price_call_sell, T, r, sigma, premium_put_buy, premium_put_sell, premium_call_buy, premium_call_sell)
     strategy_label = 'Iron Condor Payoff'    
 
 
