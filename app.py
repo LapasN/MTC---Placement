@@ -107,11 +107,11 @@ def calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_p
     # Profit or loss from holding the stock
     stock_payoff = asset_prices - purchase_price
     
-    # Payoff from the long put position
-    long_put_payoff = np.maximum(strike_price_put - asset_prices, 0) - put_prices
+    # Payoff from the long put position (adjusted with Black-Scholes price)
+    long_put_payoff = np.maximum(strike_price_put - asset_prices, 0) - premium_put
     
-    # Payoff from the short call position (negative because it's short)
-    short_call_payoff = call_prices - premium_call
+    # Payoff from the short call position (adjusted with Black-Scholes price)
+    short_call_payoff = premium_call - np.maximum(asset_prices - strike_price_call, 0)
     
     # The protective collar payoff is the sum of the stock, put, and call payoffs
     protective_collar_payoff = stock_payoff + long_put_payoff + short_call_payoff
