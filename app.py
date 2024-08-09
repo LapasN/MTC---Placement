@@ -52,21 +52,21 @@ def calculate_put_payoff(asset_prices, strike_price, T, r, sigma, premium):
 
 # Function to calculate the payoff for a straddle option
 def calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_call, premium_put):
-    # Calculate the call and put option prices using Black-Scholes for each stock price
     call_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices]
     put_prices = [black_scholes_put(S, strike_price, T, r, sigma) for S in asset_prices]
-    
-    # Calculate the straddle payoff by summing call and put payoffs and subtracting the premiums paid
+
     payoffs = [(call_price + put_price) - (premium_call + premium_put) for call_price, put_price in zip(call_prices, put_prices)]
     
     return payoffs
 
-# Function to calculate the payoff for a covered call option
-def calculate_covered_call_payoff(asset_prices, strike_price, T, r, sigma, premium, purchase_price):
-    call_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices]
-    payoffs = [(S + premium - max(0, S - strike_price)) for S in asset_prices]
+
+def calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_received):
+    long_asset_payoff = asset_prices - purchase_price
+    call_option_prices = np.array([black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices])
+    short_call_payoff = np.where(asset_prices > strike_price, strike_price - asset_prices + premium_received, premium_received)
+    total_payoff = long_asset_payoff + short_call_payoff
     
-    return payoffs
+    return total_payoff, call_option_prices
 
 def calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid):
     # Profit or loss from holding the stock
@@ -196,7 +196,7 @@ r = 0.05  # Risk-free interest rate
 sigma = 0.25  # Volatility
 
 if strategy == "Covered Call":
-    purchase_price = st.number_input('Purchase Price of Underlying Asset', value= strike_price, key='purchase_price')
+    purchase_price = st.number_input('Purchase Price of Underlying Asset', value= asset_price, key='purchase_price')
 elif strategy == "Married Put":
     purchase_price = st.number_input('Purchase Price of Underlying Asset', value= asset_price, key='purchase_price')
     premium_paid = st.number_input('Premium Paid for Put Option', value=10.0, key='premium_paid')
@@ -276,7 +276,7 @@ elif strategy == "Straddle":
     break_even_up = strike_price + premium
     break_even_down = strike_price - premium
 elif strategy == "Covered Call":
-    payoffs = calculate_covered_call_payoff(asset_prices, strike_price, T, r, sigma, premium, purchase_price)
+    payoffs = alculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_received)
     strategy_label = 'Covered Call Payoff'
 elif strategy == "Married Put":
     payoffs = calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid)
