@@ -63,7 +63,7 @@ def calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_c
 def calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium):
     call_option_prices = np.array([black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices])
     long_asset_payoff = asset_prices - call_option_prices
-    short_call_payoff = np.where(call_option_prices > strike_price, strike_price - call_option_prices + premium, premium)
+    short_call_payoff = np.where(asset_prices > strike_price, strike_price - asset_prices + premium, premium)
     payoffs = long_asset_payoff + short_call_payoff
     
     return payoffs
