@@ -325,6 +325,15 @@ ax.set_title(f'{strategy} Payoff at Different Prices')
 if strategy in ["Call", "Put", "Bull Call Spread", "Bull Put Spread", "Covered Call", "Married Put"]:
     ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) > 0), color='green', alpha=0.3)
     ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) <= 0), color='red', alpha=0.3)
+elif strategy in ["Covered Call"]:
+    ax.fill_between(asset_prices, call_option_prices, where=(np.array(payoffs) > 0), color='green', alpha=0.3)
+    ax.fill_between(asset_prices, call_option_prices, where=(np.array(payoffs) <= 0), color='red', alpha=0.3)
+    break_even = purchase_price - premium
+    max_profit = premium  # Maximum profit is the premium received
+    ax.axvline(x=break_even, color='blue', linestyle='--')
+    ax.text(break_even, 0, f' Break-Even\n ${break_even}', horizontalalignment='right')
+    ax.axhline(y=max_profit, color='blue', linestyle='--')
+    ax.text(asset_prices[-1], max_profit, f' Max Profit: ${max_profit}', verticalalignment='bottom')
 elif strategy in ["Long Call Butterfly Spread", "Iron Butterfly", "Iron Condor"]:
     # Typically, these strategies have a profit region around the ATM strikes and losses elsewhere
     profit_indices = (payoffs > 0)
@@ -336,19 +345,6 @@ elif strategy == "Iron Condor":
         profit_range = (asset_prices > strike_price_put_sell) & (asset_prices < strike_price_call_sell)
         ax.fill_between(asset_prices, payoffs, 0, where=profit_range, color='green', alpha=0.3)
         ax.fill_between(asset_prices, payoffs, 0, where=~profit_range, color='red', alpha=0.3)
-# Strategy-specific annotations and markers
-elif strategy == "Covered Call":
-    break_even = purchase_price - premium
-    max_profit = premium  # Maximum profit is the premium received
-    ax.axvline(x=break_even, color='blue', linestyle='--')
-    ax.text(break_even, 0, f' Break-Even\n ${break_even}', horizontalalignment='right')
-    ax.axhline(y=max_profit, color='blue', linestyle='--')
-    ax.text(asset_prices[-1], max_profit, f' Max Profit: ${max_profit}', verticalalignment='bottom')
-    ax2 = ax1.twinx()
-    color = 'tab:orange'
-    ax2.set_ylabel('Call Option Price', color=color)
-    ax2.plot(asset_prices, call_option_prices, label='Call Option Price', color=color)
-    ax2.tick_params(axis='y', labelcolor=color)
 # Apply shading logic for strategies with more complex payoff structures like Butterfly spreads
 elif strategy in ["Long Call Butterfly Spread", "Iron Butterfly"]:
     # Identify profit and loss indices
