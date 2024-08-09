@@ -69,12 +69,17 @@ def calculate_married_put_payoff_bs(asset_prices, purchase_price, strike_price, 
     put_payoff = put_option_prices - premium_paid
     payoffs = stock_payoff + put_payoff
     return payoffs
-# Function to calculate the payoff for a Bull Call Spread option
-def calculate_bull_call_spread_payoff(asset_prices, strike_price_long_call, strike_price_short_call, premium_long_call, premium_short_call):
+    
+def calculate_bull_call_spread_payoff_bs(asset_prices, strike_price_long_call, strike_price_short_call, T, r, sigma, premium_long_call, premium_short_call):
+    # Calculate call option prices using the Black-Scholes formula
+    long_call_prices = np.array([black_scholes_call(S, strike_price_long_call, T, r, sigma) for S in asset_prices])
+    short_call_prices = np.array([black_scholes_call(S, strike_price_short_call, T, r, sigma) for S in asset_prices])
+    
     # Payoff from the long call position
-    long_call_payoff = np.maximum(asset_prices - strike_price_long_call, 0) - premium_long_call
+    long_call_payoff = long_call_prices - premium_long_call
     # Payoff from the short call position (negative because it's short)
-    short_call_payoff = premium_short_call - np.maximum(asset_prices - strike_price_short_call, 0)
+    short_call_payoff = premium_short_call - short_call_prices
+    
     # The bull call spread payoff is the sum of the long call and short call payoffs
     bull_call_spread_payoff = long_call_payoff + short_call_payoff
     return bull_call_spread_payoff
@@ -276,7 +281,7 @@ elif strategy == "Married Put":
     payoffs = calculate_married_put_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_paid)
     strategy_label = 'Married Put Payoff'
 elif strategy == "Bull Call Spread":
-    payoffs = calculate_bull_call_spread_payoff(asset_prices, strike_price_long_call, strike_price_short_call, premium_long_call, premium_short_call)
+    payoffs = calculate_bull_call_spread_payoff_bs(asset_prices, strike_price_long_call, strike_price_short_call, T, r, sigma, premium_long_call, premium_short_call)
     strategy_label = 'Bull Call Spread Payoff'
 elif strategy == "Bull Put Spread":
     payoffs = calculate_bull_put_spread_payoff(asset_prices, strike_price_short_put, strike_price_long_put, premium_short_put, premium_long_put)
