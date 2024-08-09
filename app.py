@@ -63,14 +63,12 @@ def calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price,
     
     return payoffs
 
-def calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid):
-    # Profit or loss from holding the stock
+def calculate_married_put_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_paid):
+    put_option_prices = np.array([black_scholes_put(S, strike_price, T, r, sigma) for S in asset_prices])
     stock_payoff = asset_prices - purchase_price
-    # Payoff from the put option
-    put_payoff = np.maximum(strike_price - asset_prices, 0) - premium_paid
-    # The married put payoff is the sum of the stock and put option payoffs
-    married_put_payoff = stock_payoff + put_payoff
-    return married_put_payoff
+    put_payoff = put_option_prices - premium_paid
+    payoffs = stock_payoff + put_payoff
+    return payoffs
 # Function to calculate the payoff for a Bull Call Spread option
 def calculate_bull_call_spread_payoff(asset_prices, strike_price_long_call, strike_price_short_call, premium_long_call, premium_short_call):
     # Payoff from the long call position
@@ -275,7 +273,7 @@ elif strategy == "Covered Call":
     payoffs = calculate_covered_call_payoff_bs(asset_prices,purchase_price,strike_price,T,r,sigma,premium)    
     strategy_label = 'Covered Call Payoff'
 elif strategy == "Married Put":
-    payoffs = calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid)
+    payoffs = calculate_married_put_payoffcalculate_married_put_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_paid):
     strategy_label = 'Married Put Payoff'
 elif strategy == "Bull Call Spread":
     payoffs = calculate_bull_call_spread_payoff(asset_prices, strike_price_long_call, strike_price_short_call, premium_long_call, premium_short_call)
