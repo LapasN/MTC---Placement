@@ -133,25 +133,25 @@ def calculate_long_call_butterfly_payoff_bs(asset_prices, strike_price_low, stri
     butterfly_payoff = long_call_low_payoff + short_call_mid_payoff + long_call_high_payoff
     return butterfly_payoff
 # Function to calculate the payoff for an Iron Butterfly option
-def calculate_iron_butterfly_payoff_bs(asset_prices, strike_price_put, strike_price_call, strike_price_atm, T, r, sigma, premium_put, premium_call, premium_atm):
+def calculate_iron_butterfly_payoff_bs(asset_prices, strike_price_atm, strike_price_otm_put, strike_price_otm_call, T, r, sigma, premium_atm, premium_otm_put, premium_otm_call):
     # Calculate option prices using the Black-Scholes formula
     call_price_atm = np.array([black_scholes_call(S, strike_price_atm, T, r, sigma) for S in asset_prices])
     put_price_atm = np.array([black_scholes_put(S, strike_price_atm, T, r, sigma) for S in asset_prices])
-    call_price_low = np.array([black_scholes_call(S, strike_price_call, T, r, sigma) for S in asset_prices])
-    put_price_high = np.array([black_scholes_put(S, strike_price_put, T, r, sigma) for S in asset_prices])
+    call_price_otm_call = np.array([black_scholes_call(S, strike_price_otm_call, T, r, sigma) for S in asset_prices])
+    put_price_otm_put = np.array([black_scholes_put(S, strike_price_otm_put, T, r, sigma) for S in asset_prices])
 
     # Payoff from the long out-of-the-money put
-    long_put_payoff = put_price_high - premium_put
+    long_put_payoff = put_price_otm_put - premium_otm_put
     # Payoff from the short at-the-money put
     short_atm_put_payoff = premium_atm - put_price_atm
     # Payoff from the short at-the-money call
     short_atm_call_payoff = premium_atm - call_price_atm
     # Payoff from the long out-of-the-money call
-    long_call_payoff = call_price_low - premium_call
+    long_call_payoff = call_price_otm_call - premium_otm_call
 
     # Total payoff for the Iron Butterfly
     iron_butterfly_payoff = long_put_payoff + short_atm_put_payoff + short_atm_call_payoff + long_call_payoff
-    return iron_butterfly_payoff, put_price_high, call_price_low, put_price_atm, call_price_atm
+    return iron_butterfly_payoff
 # Function to calculate the payoff for an Iron Condor option
 def calculate_iron_condor_payoff(asset_prices, strike_price_put_buy, premium_put_buy, strike_price_put_sell, premium_put_sell, strike_price_call_sell, premium_call_sell, strike_price_call_buy, premium_call_buy):
     # Payoff from the long put
@@ -313,7 +313,7 @@ elif strategy == "Long Call Butterfly Spread":
     payoffs = calculate_long_call_butterfly_payoff_bs(asset_prices, strike_price_low, strike_price_mid, strike_price_high, T, r, sigma, premium_low, premium_mid, premium_high)
     strategy_label = 'Long Call Butterfly Spread Payoff'
 elif strategy == "Iron Butterfly":
-    payoffs = calculate_iron_butterfly_payoff_bs(asset_prices, strike_price_put, strike_price_call, strike_price_atm, T, r, sigma, premium_put, premium_call, premium_atm)
+    payoffs = calculate_iron_butterfly_payoff_bs(asset_prices, strike_price_atm, strike_price_otm_put, strike_price_otm_call, T, r, sigma, premium_atm, premium_otm_put, premium_otm_call)
     strategy_label = 'Iron Butterfly Payoff'
 elif strategy == "Iron Condor":
     # Calculate payoffs for the Iron Condor strategy
