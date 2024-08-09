@@ -64,9 +64,9 @@ def calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price,
     long_asset_payoff = asset_prices - purchase_price
     call_option_prices = np.array([black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices])
     short_call_payoff = np.where(asset_prices > strike_price, strike_price - asset_prices + premium, premium)
-    total_payoff = long_asset_payoff + short_call_payoff
+    payoffs = long_asset_payoff + short_call_payoff
     
-    return payoff, call_option_prices
+    return payoffs, call_option_prices
 
 def calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid):
     # Profit or loss from holding the stock
