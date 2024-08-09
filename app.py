@@ -362,9 +362,6 @@ elif strategy in ["Long Call Butterfly Spread", "Iron Butterfly"]:
 
 elif strategy == "Protective Collar":
     # Calculate payoffs
-    payoffs = calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_price_put, premium_put, strike_price_call, premium_call, T, r, sigma)
-
-# Strategy-specific annotations and markers
     strategy_label = 'Protective Collar Payoff'
 # Calculate maximum profit and maximum loss
     max_profit = (strike_price_call - purchase_price) - (premium_put - premium_call)
