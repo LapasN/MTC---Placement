@@ -99,16 +99,20 @@ def calculate_bull_put_spread_payoff_bs(asset_prices, strike_price_short_put, st
     bull_put_spread_payoff = short_put_payoff + long_put_payoff
     return bull_put_spread_payoff
 # Function to calculate the payoff for a Protective Collar option
-def calculate_protective_collar_payoff(asset_prices, purchase_price, strike_price_put, premium_put, strike_price_call, premium_call):
+def calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_price_put, premium_put, strike_price_call, premium_call, T, r, sigma):
+    # Calculate put and call option prices using the Black-Scholes formula
+    put_prices = np.array([black_scholes_put(S, strike_price_put, T, r, sigma) for S in asset_prices])
+    call_prices = np.array([black_scholes_call(S, strike_price_call, T, r, sigma) for S in asset_prices])
+    
     # Profit or loss from holding the stock
     stock_payoff = asset_prices - purchase_price
-
+    
     # Payoff from the long put position
-    long_put_payoff = np.maximum(strike_price_put - asset_prices, 0) - premium_put
-
+    long_put_payoff = np.maximum(strike_price_put - asset_prices, 0) - put_prices
+    
     # Payoff from the short call position (negative because it's short)
-    short_call_payoff = premium_call - np.maximum(asset_prices - strike_price_call, 0)
-
+    short_call_payoff = call_prices - premium_call
+    
     # The protective collar payoff is the sum of the stock, put, and call payoffs
     protective_collar_payoff = stock_payoff + long_put_payoff + short_call_payoff
     return protective_collar_payoff
@@ -292,7 +296,7 @@ elif strategy == "Bull Put Spread":
     payoffs = calculate_bull_put_spread_payoff_bs(asset_prices, strike_price_short_put, strike_price_long_put, T, r, sigma, premium_short_put, premium_long_put)
     strategy_label = 'Bull Put Spread Payoff'
 elif strategy == "Protective Collar": 
-    payoffs = calculate_protective_collar_payoff(asset_prices, purchase_price, strike_price_put, premium_put, strike_price_call, premium_call)
+    payoffs = calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_price_put, premium_put, strike_price_call, premium_call, T, r, sigma)
     strategy_label = 'Protective Collar Payoff'
 elif strategy == "Long Call Butterfly Spread":
     payoffs = calculate_long_call_butterfly_payoff(asset_prices, strike_price_low, strike_price_mid, strike_price_high, premium_low, premium_mid, premium_high)
