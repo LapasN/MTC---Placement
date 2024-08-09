@@ -62,8 +62,8 @@ def calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_c
 
 def calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium):
     call_option_prices = np.array([black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices])
-    long_asset_payoff = asset_prices - strike_price
-    short_call_payoff = np.where(asset_prices > strike_price, strike_price - asset_prices + premium, premium)
+    long_asset_payoff = call_option_prices - strike_price
+    short_call_payoff = np.where(call_option_prices > strike_price, strike_price - call_option_prices + premium, premium)
     payoffs = long_asset_payoff + short_call_payoff
     
     return payoffs
@@ -196,7 +196,7 @@ r = 0.05  # Risk-free interest rate
 sigma = 0.25  # Volatility
 
 if strategy == "Covered Call":
-    purchase_price = st.number_input('Purchase Price of Underlying Asset', value= call_option_prices, key='purchase_price')
+    purchase_price = st.number_input('Purchase Price of Underlying Asset', value= asset_price, key='purchase_price')
 elif strategy == "Married Put":
     purchase_price = st.number_input('Purchase Price of Underlying Asset', value= asset_price, key='purchase_price')
     premium_paid = st.number_input('Premium Paid for Put Option', value=10.0, key='premium_paid')
@@ -322,12 +322,12 @@ ax.set_title(f'{strategy} Payoff at Different Prices')
 # Shading for profit/loss based on the strategy
 # For strategies like Straddle, Butterfly, Iron Butterfly, Iron Condor, etc., where the profit/loss regions are not straightforward,
 # we need to compute the specific conditions for profit and loss based on the strategy's payoff profile.
-if strategy in ["Call", "Put", "Bull Call Spread", "Bull Put Spread", "Covered Call", "Married Put"]:
+if strategy in ["Call", "Put", "Bull Call Spread", "Bull Put Spread",  "Married Put"]:
     ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) > 0), color='green', alpha=0.3)
     ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) <= 0), color='red', alpha=0.3)
 elif strategy in ["Covered Call"]:
-    ax.fill_between(asset_prices, call_option_prices, where=(np.array(payoffs) > 0), color='green', alpha=0.3)
-    ax.fill_between(asset_prices, call_option_prices, where=(np.array(payoffs) <= 0), color='red', alpha=0.3)
+    ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) > 0), color='green', alpha=0.3)
+    ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) <= 0), color='red', alpha=0.3)
     break_even = purchase_price - premium
     max_profit = premium  # Maximum profit is the premium received
     ax.axvline(x=break_even, color='blue', linestyle='--')
