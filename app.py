@@ -60,7 +60,7 @@ def calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_c
     return payoffs
 
 
-def calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_received):
+def calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium):
     long_asset_payoff = asset_prices - purchase_price
     call_option_prices = np.array([black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices])
     short_call_payoff = np.where(asset_prices > strike_price, strike_price - asset_prices + premium_received, premium_received)
@@ -276,7 +276,7 @@ elif strategy == "Straddle":
     break_even_up = strike_price + premium
     break_even_down = strike_price - premium
 elif strategy == "Covered Call":
-    payoffs = calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_received)
+    payoffs = calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium)
     strategy_label = 'Covered Call Payoff'
 elif strategy == "Married Put":
     payoffs = calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid)
