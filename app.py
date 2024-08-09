@@ -131,7 +131,7 @@ def calculate_long_call_butterfly_payoff_bs(asset_prices, strike_price_low, stri
 
     # Total payoff for the butterfly spread
     butterfly_payoff = long_call_low_payoff + short_call_mid_payoff + long_call_high_payoff
-    return butterfly_payoff, call_prices_low, call_prices_mid, call_prices_high
+    return butterfly_payoff
 # Function to calculate the payoff for an Iron Butterfly option
 def calculate_iron_butterfly_payoff(asset_prices, strike_price_put, premium_put, strike_price_call, premium_call, premium_atm, strike_price_atm):
     # Payoff from the long out-of-the-money put
