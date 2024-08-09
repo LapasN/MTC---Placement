@@ -61,12 +61,19 @@ def calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_c
 
 
 def calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium):
-    call_option_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices]
-    long_asset_payoff = call_option_prices - strike_price
-    short_call_payoff = np.where(call_option_prices > strike_price, strike_price - call_option_prices + premium, premium)
-    payoffs = long_asset_payoff + short_call_payoff
+    # Calculate Black-Scholes call option prices
+    call_option_prices = np.array([black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices])
     
-    return payoffs
+    # Payoff from holding the underlying asset
+    long_asset_payoff = asset_prices - purchase_price
+    
+    # Payoff from the sold call option
+    short_call_payoff = np.where(asset_prices > strike_price, strike_price - asset_prices + premium, premium)
+    
+    # Total payoff of the covered call strategy
+    covered_call_payoff = long_asset_payoff + short_call_payoff
+    
+    return call_option_prices, covered_call_payoff
 
 def calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid):
     # Profit or loss from holding the stock
@@ -264,6 +271,15 @@ fig, ax = plt.subplots()
 # Initialize payoffs to an empty array
 payoffs = np.zeros_like(asset_prices)
 
+call_option_prices, covered_call_payoff = calculate_covered_call_payoff(
+    asset_prices,
+    purchase_price,
+    strike_price,
+    T,
+    r,
+    sigma,
+    premium
+)
 # Calculate payoffs for each strategy
 if strategy == "Call":
     payoffs = calculate_call_payoff(asset_prices, strike_price, T, r, sigma, premium)
@@ -277,7 +293,7 @@ elif strategy == "Straddle":
     break_even_up = strike_price + premium
     break_even_down = strike_price - premium
 elif strategy == "Covered Call":
-    payoffs = calculate_covered_call_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium)
+    call_option_prices, covered_call_payoff = calculate_covered_call_payoff(asset_prices,purchase_price,strike_price,T,r,sigma,premium)    
     strategy_label = 'Covered Call Payoff'
 elif strategy == "Married Put":
     payoffs = calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid)
@@ -329,6 +345,8 @@ if strategy in ["Call", "Put", "Bull Call Spread", "Bull Put Spread",  "Married 
 elif strategy in ["Covered Call"]:
     ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) > 0), color='green', alpha=0.3)
     ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) <= 0), color='red', alpha=0.3)
+    plt.plot(asset_prices, covered_call_payoff, label='Covered Call Payoff', color='blue')
+    plt.plot(asset_prices, call_option_prices, label='Black-Scholes Call Price', color='orange', linestyle='--')
     break_even = purchase_price - premium
     max_profit = premium  # Maximum profit is the premium received
     ax.axvline(x=break_even, color='blue', linestyle='--')
