@@ -209,46 +209,46 @@ elif strategy == "Bull Call Spread":
     premium_short_call = st.number_input('Premium for Short Call', min_value=0.0, value=5.0, key='premium_short_call')
 elif strategy == "Bull Put Spread":
     # For Bull Put Spread, we need two strike prices and two premiums
-    strike_price_short_put = st.number_input('Strike Price for Short Put', min_value=0, value=asset_price, key='strike_price_short_put')
+    strike_price_short_put = st.number_input('Strike Price for Short Put', min_value=0, value=strike_price, key='strike_price_short_put')
     premium_short_put = st.number_input('Premium for Short Put', min_value=0.0, value=10.0, key='premium_short_put')
-    strike_price_long_put = st.number_input('Strike Price for Long Put', min_value=0, value=asset_price - 10, key='strike_price_long_put')
+    strike_price_long_put = st.number_input('Strike Price for Long Put', min_value=0, value=strike_price - 10, key='strike_price_long_put')
     premium_long_put = st.number_input('Premium for Long Put', min_value=0.0, value=5.0, key='premium_long_put')
 # Inputs specific to Protective Collar
 elif strategy == "Protective Collar":
     purchase_price = st.number_input('Purchase Price of Underlying Asset', value=asset_price, key='purchase_price_collar')
-    strike_price_put = st.number_input('Strike Price for Long Put', min_value=0, value= asset_price -5, key='strike_price_put')
+    strike_price_put = st.number_input('Strike Price for Long Put', min_value=0, value= strike_price -5, key='strike_price_put')
     premium_put = st.number_input('Premium for Long Put', min_value=0.0, value=5.0, key='premium_put')
-    strike_price_call = st.number_input('Strike Price for Short Call', min_value=0, value= asset_price + 10, key='strike_price_call')
+    strike_price_call = st.number_input('Strike Price for Short Call', min_value=0, value= strike_price + 10, key='strike_price_call')
     premium_call = st.number_input('Premium for Short Call', min_value=0.0, value=5.0, key='premium_call')
 elif strategy == "Long Call Butterfly Spread":
     # For Long Call Butterfly Spread, we need three strike prices and three premiums
-    strike_price_low = st.number_input('Strike Price for Low Call', min_value=0, value=asset_price - 10, key='strike_price_low')
+    strike_price_low = st.number_input('Strike Price for Low Call', min_value=0, value=strike_price - 10, key='strike_price_low')
     premium_low = st.number_input('Premium for Low Call', min_value=0.0, value=3.0, key='premium_low')
-    strike_price_mid = st.number_input('Strike Price for Mid Call', min_value=0, value=asset_price, key='strike_price_mid')
+    strike_price_mid = st.number_input('Strike Price for Mid Call', min_value=0, value=strike_price, key='strike_price_mid')
     premium_mid = st.number_input('Premium for Mid Call', min_value=0.0, value=4.0, key='premium_mid')
-    strike_price_high = st.number_input('Strike Price for High Call', min_value=0, value=asset_price + 10, key='strike_price_high')
+    strike_price_high = st.number_input('Strike Price for High Call', min_value=0, value=strike_price + 10, key='strike_price_high')
     premium_high = st.number_input('Premium for High Call', min_value=0.0, value=8.0, key='premium_high')
 # Inputs specific to Iron Butterfly
 elif strategy == "Iron Butterfly":
     # For an Iron Butterfly, we need the strike price and premiums for the ATM options and the OTM put and call
-    strike_price_atm = st.number_input('Strike Price for ATM Options', min_value=0, value=asset_price, key='strike_price_atm')
+    strike_price_atm = st.number_input('Strike Price for ATM Options', min_value=0, value=strike_price, key='strike_price_atm')
     premium_atm = st.number_input('Premium for ATM Options', min_value=0.0, value=10.0, key='premium_atm')
-    strike_price_otm_put = st.number_input('Strike Price for OTM Put', min_value=0, value=asset_price - 10, key='strike_price_otm_put')
+    strike_price_otm_put = st.number_input('Strike Price for OTM Put', min_value=0, value=strike_price - 10, key='strike_price_otm_put')
     premium_otm_put = st.number_input('Premium for OTM Put', min_value=0.0, value=10.0, key='premium_otm_put')
-    strike_price_otm_call = st.number_input('Strike Price for OTM Call', min_value=0, value=asset_price + 10, key='strike_price_otm_call')
+    strike_price_otm_call = st.number_input('Strike Price for OTM Call', min_value=0, value=strike_price + 10, key='strike_price_otm_call')
     premium_otm_call = st.number_input('Premium for OTM Call', min_value=0.0, value=3.0, key='premium_otm_call')
     # Inputs specific to Iron Condor
 elif strategy == "Iron Condor":
-    strike_price_put_buy = st.number_input('Strike Price for Buy Put', min_value=0, value=asset_price - 20, key='strike_price_put_buy')
+    strike_price_put_buy = st.number_input('Strike Price for Buy Put', min_value=0, value=strike_price - 20, key='strike_price_put_buy')
     premium_put_buy = st.number_input('Premium for Buy Put', min_value=0.0, value=1.0, key='premium_put_buy')
     
-    strike_price_put_sell = st.number_input('Strike Price for Sell Put', min_value=0, value=asset_price -10, key='strike_price_put_sell')
+    strike_price_put_sell = st.number_input('Strike Price for Sell Put', min_value=0, value=strike_price -10, key='strike_price_put_sell')
     premium_put_sell = st.number_input('Premium for Sell Put', min_value=0.0, value=2.0, key='premium_put_sell')
     
-    strike_price_call_sell = st.number_input('Strike Price for Sell Call', min_value=0, value=asset_price +10, key='strike_price_call_sell')
+    strike_price_call_sell = st.number_input('Strike Price for Sell Call', min_value=0, value=strike_price +10, key='strike_price_call_sell')
     premium_call_sell = st.number_input('Premium for Sell Call', min_value=0.0, value=2.0, key='premium_call_sell')
     
-    strike_price_call_buy = st.number_input('Strike Price for Buy Call', min_value=0, value=asset_price +20, key='strike_price_call_buy')
+    strike_price_call_buy = st.number_input('Strike Price for Buy Call', min_value=0, value=strike_price +20, key='strike_price_call_buy')
     premium_call_buy = st.number_input('Premium for Buy Call', min_value=0.0, value=1.0, key='premium_call_buy')
     # Define a label for the strategy
 strategy_label = f'{strategy} Option Payoff'
