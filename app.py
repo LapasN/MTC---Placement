@@ -203,9 +203,9 @@ elif strategy == "Straddle":
     premium_put = st.number_input('Premium Paid for Put Option', min_value=0.0, value=5.0, key='premium_put_straddle')
 elif strategy == "Bull Call Spread":
     # For Bull Call Spread, we need two strike prices and two premiums
-    strike_price_long_call = st.number_input('Strike Price for Long Call', min_value=0, value=asset_price, key='strike_price_long_call')
+    strike_price_long_call = st.number_input('Strike Price for Long Call', min_value=0, value = asset_price, key='strike_price_long_call')
     premium_long_call = st.number_input('Premium for Long Call', min_value=0.0, value=10.0, key='premium_long_call')
-    strike_price_short_call = st.number_input('Strike Price for Short Call', min_value=0, value= asset_price + 10, key='strike_price_short_call')
+    strike_price_short_call = st.number_input('Strike Price for Short Call', min_value=0, value = (asset_price + 10), key='strike_price_short_call')
     premium_short_call = st.number_input('Premium for Short Call', min_value=0.0, value=5.0, key='premium_short_call')
 elif strategy == "Bull Put Spread":
     # For Bull Put Spread, we need two strike prices and two premiums
