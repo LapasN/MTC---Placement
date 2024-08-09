@@ -62,7 +62,7 @@ def calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_c
     return payoffs
 
 # Function to calculate the payoff for a covered call option
-def calculate_covered_call_payoff(asset_prices, strike_price, T, r, sigma, premium, initial_stock_price):
+def calculate_covered_call_payoff(asset_prices, strike_price, T, r, sigma, premium, purchase_price):
     call_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices]
     payoffs = [(S + premium - max(0, S - strike_price)) for S in asset_prices]
     
@@ -276,7 +276,7 @@ elif strategy == "Straddle":
     break_even_up = strike_price + premium
     break_even_down = strike_price - premium
 elif strategy == "Covered Call":
-    payoffs = calculate_covered_call_payoff(asset_prices, strike_price, T, r, sigma, premium, initial_stock_price)
+    payoffs = calculate_covered_call_payoff(asset_prices, strike_price, T, r, sigma, premium, purchase_price)
     strategy_label = 'Covered Call Payoff'
 elif strategy == "Married Put":
     payoffs = calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid)
