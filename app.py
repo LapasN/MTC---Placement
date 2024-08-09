@@ -273,7 +273,7 @@ elif strategy == "Covered Call":
     payoffs = calculate_covered_call_payoff_bs(asset_prices,purchase_price,strike_price,T,r,sigma,premium)    
     strategy_label = 'Covered Call Payoff'
 elif strategy == "Married Put":
-    payoffs = calculate_married_put_payoffcalculate_married_put_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_paid):
+    payoffs = calculate_married_put_payoffcalculate_married_put_payoff_bs(asset_prices, purchase_price, strike_price, T, r, sigma, premium_paid)
     strategy_label = 'Married Put Payoff'
 elif strategy == "Bull Call Spread":
     payoffs = calculate_bull_call_spread_payoff(asset_prices, strike_price_long_call, strike_price_short_call, premium_long_call, premium_short_call)
