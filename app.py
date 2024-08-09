@@ -275,7 +275,7 @@ elif strategy == "Put":
     payoffs = calculate_put_payoff(asset_prices, strike_price, T, r, sigma, premium)
     strategy_label = 'Long Put Payoff'
 elif strategy == "Straddle":
-    payoffs = calculate_straddle_payoff(asset_prices, strike_price, premium)
+    payoffs = calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_call, premium_put)
     strategy_label = 'Straddle Payoff'
     break_even_up = strike_price + premium
     break_even_down = strike_price - premium
