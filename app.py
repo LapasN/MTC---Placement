@@ -271,15 +271,6 @@ fig, ax = plt.subplots()
 # Initialize payoffs to an empty array
 payoffs = np.zeros_like(asset_prices)
 
-call_option_prices, covered_call_payoff = calculate_covered_call_payoff(
-    asset_prices,
-    purchase_price,
-    strike_price,
-    T,
-    r,
-    sigma,
-    premium
-)
 # Calculate payoffs for each strategy
 if strategy == "Call":
     payoffs = calculate_call_payoff(asset_prices, strike_price, T, r, sigma, premium)
