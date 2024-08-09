@@ -276,7 +276,7 @@ elif strategy == "Straddle":
     break_even_up = strike_price + premium
     break_even_down = strike_price - premium
 elif strategy == "Covered Call":
-    payoff = calculate_covered_call_payoff_bs(asset_prices,purchase_price,strike_price,T,r,sigma,premium)    
+    payoffs = calculate_covered_call_payoff_bs(asset_prices,purchase_price,strike_price,T,r,sigma,premium)    
     strategy_label = 'Covered Call Payoff'
 elif strategy == "Married Put":
     payoffs = calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid)
@@ -322,12 +322,10 @@ ax.set_title(f'{strategy} Payoff at Different Prices')
 # Shading for profit/loss based on the strategy
 # For strategies like Straddle, Butterfly, Iron Butterfly, Iron Condor, etc., where the profit/loss regions are not straightforward,
 # we need to compute the specific conditions for profit and loss based on the strategy's payoff profile.
-if strategy in ["Call", "Put", "Bull Call Spread", "Bull Put Spread",  "Married Put"]:
+if strategy in ["Call", "Put", "Bull Call Spread", "Bull Put Spread", "Covered Call", "Married Put"]:
     ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) > 0), color='green', alpha=0.3)
     ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) <= 0), color='red', alpha=0.3)
 elif strategy in ["Covered Call"]:
-    ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) > 0), color='green', alpha=0.3)
-    ax.fill_between(asset_prices, payoffs, where=(np.array(payoffs) <= 0), color='red', alpha=0.3)
     break_even = purchase_price - premium
     max_profit = premium  # Maximum profit is the premium received
     ax.axvline(x=break_even, color='blue', linestyle='--')
