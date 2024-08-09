@@ -116,17 +116,22 @@ def calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_p
     protective_collar_payoff = stock_payoff + long_put_payoff + short_call_payoff
     return protective_collar_payoff
 # Function to calculate the payoff for a Long Call Butterfly Spread option
-def calculate_long_call_butterfly_payoff(asset_prices, strike_price_low, strike_price_mid, strike_price_high, premium_low, premium_mid, premium_high):
-    # Buying one low strike call
-    long_call_low_payoff = np.maximum(asset_prices - strike_price_low, 0) - premium_low
-    # Selling two mid strike calls
-    short_call_mid_payoff = 2 * (premium_mid - np.maximum(asset_prices - strike_price_mid, 0))
-    # Buying one high strike call
-    long_call_high_payoff = np.maximum(asset_prices - strike_price_high, 0) - premium_high
+def calculate_long_call_butterfly_payoff_bs(asset_prices, strike_price_low, strike_price_mid, strike_price_high, T, r, sigma, premium_low, premium_mid, premium_high):
+    # Calculate call option prices using the Black-Scholes formula
+    call_prices_low = np.array([black_scholes_call(S, strike_price_low, T, r, sigma) for S in asset_prices])
+    call_prices_mid = np.array([black_scholes_call(S, strike_price_mid, T, r, sigma) for S in asset_prices])
+    call_prices_high = np.array([black_scholes_call(S, strike_price_high, T, r, sigma) for S in asset_prices])
+    
+    # Payoff for buying one low strike call
+    long_call_low_payoff = call_prices_low - premium_low
+    # Payoff for selling two mid strike calls
+    short_call_mid_payoff = 2 * (premium_mid - call_prices_mid)
+    # Payoff for buying one high strike call
+    long_call_high_payoff = call_prices_high - premium_high
 
     # Total payoff for the butterfly spread
     butterfly_payoff = long_call_low_payoff + short_call_mid_payoff + long_call_high_payoff
-    return butterfly_payoff
+    return butterfly_payoff, call_prices_low, call_prices_mid, call_prices_high
 # Function to calculate the payoff for an Iron Butterfly option
 def calculate_iron_butterfly_payoff(asset_prices, strike_price_put, premium_put, strike_price_call, premium_call, premium_atm, strike_price_atm):
     # Payoff from the long out-of-the-money put
@@ -298,7 +303,7 @@ elif strategy == "Protective Collar":
     payoffs = calculate_protective_collar_payoff_bs(asset_prices, purchase_price, strike_price_put, premium_put, strike_price_call, premium_call, T, r, sigma)
     strategy_label = 'Protective Collar Payoff'
 elif strategy == "Long Call Butterfly Spread":
-    payoffs = calculate_long_call_butterfly_payoff(asset_prices, strike_price_low, strike_price_mid, strike_price_high, premium_low, premium_mid, premium_high)
+    payoffs = calculate_long_call_butterfly_payoff_bs(asset_prices, strike_price_low, strike_price_mid, strike_price_high, T, r, sigma, premium_low, premium_mid, premium_high)
     strategy_label = 'Long Call Butterfly Spread Payoff'
 elif strategy == "Iron Butterfly":
     payoffs = calculate_iron_butterfly_payoff(asset_prices, strike_price_otm_put, premium_otm_put, strike_price_otm_call, premium_otm_call, premium_atm, strike_price_atm)
