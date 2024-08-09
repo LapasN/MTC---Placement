@@ -31,15 +31,10 @@ def black_scholes_call(S, K, T, r, sigma):
     return call_price
 def black_scholes_put(S, K, T, r, sigma):
     # Black-Scholes formula for put option price
-    from scipy.stats import norm
-    
     d1 = (np.log(S / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
     d2 = d1 - sigma * np.sqrt(T)
-    
     put_price = (K * np.exp(-r * T) * norm.cdf(-d2) - S * norm.cdf(-d1))
     return put_price
-
-
 
 def calculate_call_payoff(asset_prices, strike_price, T, r, sigma, premium):
     # Calculate the option price using Black-Scholes for each stock price
@@ -67,10 +62,11 @@ def calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_c
     return payoffs
 
 # Function to calculate the payoff for a covered call option
-def calculate_covered_call_payoff(asset_prices, purchase_price, strike_price, premium_received):
-    long_asset_payoff = asset_prices - purchase_price
-    short_call_payoff = np.where(asset_prices > strike_price, strike_price - asset_prices + premium_received, premium_received)
-    return long_asset_payoff + short_call_payoff
+def calculate_covered_call_payoff(asset_prices, strike_price, T, r, sigma, premium, initial_stock_price):
+    call_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices]
+    payoffs = [(S + premium - max(0, S - strike_price)) for S in asset_prices]
+    
+    return payoffs
 
 def calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid):
     # Profit or loss from holding the stock
@@ -280,7 +276,7 @@ elif strategy == "Straddle":
     break_even_up = strike_price + premium
     break_even_down = strike_price - premium
 elif strategy == "Covered Call":
-    payoffs = calculate_covered_call_payoff(asset_prices, purchase_price, strike_price, premium)
+    payoffs = calculate_covered_call_payoff(asset_prices, strike_price, T, r, sigma, premium, initial_stock_price)
     strategy_label = 'Covered Call Payoff'
 elif strategy == "Married Put":
     payoffs = calculate_married_put_payoff(asset_prices, purchase_price, strike_price, premium_paid)
