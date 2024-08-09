@@ -38,6 +38,9 @@ def black_scholes_put(S, K, T, r, sigma):
     
     put_price = (K * np.exp(-r * T) * norm.cdf(-d2) - S * norm.cdf(-d1))
     return put_price
+
+
+
 def calculate_call_payoff(asset_prices, strike_price, T, r, sigma, premium):
     # Calculate the option price using Black-Scholes for each stock price
     option_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices]
@@ -53,10 +56,15 @@ def calculate_put_payoff(asset_prices, strike_price, T, r, sigma, premium):
     return payoffs
 
 # Function to calculate the payoff for a straddle option
-def calculate_straddle_payoff(asset_prices, strike, premium):
-    call_payoff = np.maximum(asset_prices - strike, 0) - premium
-    put_payoff = np.maximum(strike - asset_prices, 0) - premium
-    return call_payoff + put_payoff
+def calculate_straddle_payoff(asset_prices, strike_price, T, r, sigma, premium_call, premium_put):
+    # Calculate the call and put option prices using Black-Scholes for each stock price
+    call_prices = [black_scholes_call(S, strike_price, T, r, sigma) for S in asset_prices]
+    put_prices = [black_scholes_put(S, strike_price, T, r, sigma) for S in asset_prices]
+    
+    # Calculate the straddle payoff by summing call and put payoffs and subtracting the premiums paid
+    payoffs = [(call_price + put_price) - (premium_call + premium_put) for call_price, put_price in zip(call_prices, put_prices)]
+    
+    return payoffs
 
 # Function to calculate the payoff for a covered call option
 def calculate_covered_call_payoff(asset_prices, purchase_price, strike_price, premium_received):
