@@ -212,7 +212,7 @@ strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered 
 asset_price = st.number_input('Underlying Asset Price', value=most_recent_close, key=f'asset_price_{selected_symbol}')
 strike_price = st.number_input('Strike Price', value=int(round(asset_price, 0)), step=1, key=f'strike_{strategy}')
 premium = st.number_input('Premium',value=10, key=f'premium_{strategy}')
-current_date = st.date_input('Expiration Date', key=f'expiry_{strategy}')
+current_date = st.date_input('Current Date', key=f'expiry_{strategy}')
 expiration_date = st.date_input('Expiration Date', key=f'expiry_{strategy}')
 
 T = (expiration_date - current_date).days / 365  # Time to expiration in years
