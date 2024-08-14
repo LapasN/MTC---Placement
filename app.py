@@ -281,7 +281,7 @@ elif strategy == "Iron Condor":
     # Define a label for the strategy
 strategy_label = f'{strategy} Option Payoff'
 # Calculation and plotting based on strategy
-asset_prices = np.linspace(max(0, strike_price - 50), strike_price + 50, 200)
+asset_prices = np.linspace(max(0, strike_price - 50), strike_price + 50, 100, endpoint = False)
 fig, ax = plt.subplots()
 
 # Initialize payoffs to an empty array
