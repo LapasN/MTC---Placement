@@ -211,7 +211,7 @@ strategy = st.selectbox("Select Strategy", ["Call", "Put", "Straddle", "Covered 
 # Strategy parameters
 asset_price = st.number_input('Underlying Asset Price', value=most_recent_close, key=f'asset_price_{selected_symbol}')
 strike_price = st.number_input('Strike Price', value=int(round(asset_price, 0)), step=1, key=f'strike_{strategy}')
-premium = st.number_input('Premium',value=10, key=f'premium_{strategy}')
+premium = st.number_input('Premium',value=10, step = 0.01, key=f'premium_{strategy}')
 current_date = st.date_input('Current Date', key=f'current_{strategy}')
 expiration_date = st.date_input('Expiration Date', key=f'expiry_{strategy}')
 
@@ -281,7 +281,7 @@ elif strategy == "Iron Condor":
     # Define a label for the strategy
 strategy_label = f'{strategy} Option Payoff'
 # Calculation and plotting based on strategy
-asset_prices = np.linspace(max(0, strike_price - 50), strike_price + 50, 100, endpoint = False)
+asset_prices = np.linspace(max(0, strike_price - 50), strike_price + 50, 100)
 fig, ax = plt.subplots()
 
 # Initialize payoffs to an empty array
